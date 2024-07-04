@@ -54,6 +54,7 @@ src/utils/helper.js
 tests/
 tests/index.test.js
 
+
 ==== .gitignore ====
 node_modules/
 .DS_Store
