@@ -1,0 +1,161 @@
+#!/bin/bash
+
+show_help() {
+    cat << EOF
+Usage: pjcat [OPTIONS] [SEARCH_PATTERN]
+
+Display the contents of text files in a project.
+By default, binary files, node_modules, .git directories, etc. are excluded.
+
+Options:
+  -h, --help           Show this help message and exit
+  -e, --exclude PATTERN Exclude files/directories matching the specified pattern (additional)
+  -i, --include PATTERN Include files/directories that are excluded by default
+  -b, --include-binary Include binary files
+
+Arguments:
+  SEARCH_PATTERN       Regular expression pattern to match filenames (default: ".*")
+
+Examples:
+  pjcat
+  pjcat ".*\.js$"
+  pjcat -e "dist" -e "*.tmp" ".*\.(js|ts)$"
+  pjcat -i "node_modules" -e "build" ".*"
+  pjcat -b ".*"  # Include binary files
+EOF
+}
+
+search_pattern=".*"
+default_exclude_dirs=(
+    "node_modules"
+    ".git"
+    ".nuxt"
+    "dist"
+    "build"
+    ".cache"
+    ".vscode"
+    ".idea"
+    "coverage"
+    "tmp"
+    "temp"
+    "logs"
+    ".next"
+    ".DS_Store"
+    "__pycache__"
+    "venv"
+)
+default_exclude_files=(
+    "package-lock.json"
+    "yarn.lock"
+    "npm-debug.log"
+    "yarn-error.log"
+    "*.log"
+    "*.min.js"
+    "*.min.css"
+    "*.map"
+    ".gitignore"
+    ".dockerignore"
+    "Dockerfile"
+    "*.pyc"
+    "*.pyo"
+    "*.swp"
+    "*.swo"
+    "*.bak"
+    "*.cache"
+    "*.DS_Store"
+    ".env*"
+)
+exclude_patterns=()
+include_patterns=()
+include_binary=false
+
+binary_extensions="ico png jpg jpeg gif bmp tiff exe dll so dylib bin dat db sqlite pyc pyo o class jar war ear zip tar gz bz2 xz 7z rar pdf doc docx xls xlsx ppt pptx"
+text_extensions="txt log md markdown json xml yaml yml html htm css scss sass less js jsx ts tsx vue php py rb pl sh bash zsh fish conf cfg ini toml csv tsv sql env example"
+
+to_lower() {
+    echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+is_text_file() {
+    local file="$1"
+    local extension=$(to_lower "${file##*.}")
+    
+    if echo "$text_extensions" | grep -qw "$extension"; then
+        return 0  # Text file
+    fi
+    
+    if echo "$binary_extensions" | grep -qw "$extension"; then
+        return 1  # Binary file
+    fi
+    
+    if LC_ALL=C tr -d '[:print:]\n\r\t' < <(head -c 1024 "$file") | grep -q '[^ ]'; then
+        return 1  # Binary file
+    else
+        return 0  # Text file
+    fi
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -e|--exclude)
+            exclude_patterns+=("$2")
+            shift 2
+            ;;
+        -i|--include)
+            include_patterns+=("$2")
+            shift 2
+            ;;
+        -b|--include-binary)
+            include_binary=true
+            shift
+            ;;
+        *)
+            search_pattern="$1"
+            shift
+            ;;
+    esac
+done
+
+exclude_args=()
+for dir in "${default_exclude_dirs[@]}"; do
+    if [[ ! " ${include_patterns[@]} " =~ " ${dir} " ]]; then
+        exclude_args+=(-not -path "*/$dir/*")
+    fi
+done
+
+for file in "${default_exclude_files[@]}"; do
+    if [[ ! " ${include_patterns[@]} " =~ " ${file} " ]]; then
+        if [[ $file == *.* ]]; then
+            exclude_args+=(-not -name "$file")
+        else
+            exclude_args+=(-not -name "$file*")
+        fi
+    fi
+done
+
+for pattern in "${exclude_patterns[@]}"; do
+    exclude_args+=(-not -path "*/$pattern" -not -path "*/$pattern/*" -not -name "$pattern")
+done
+
+echo "=== Directory and File List ==="
+{
+    find . -type d "${exclude_args[@]}" | sed 's|^\./||' | sed 's|$|/|' | grep -v '^$'
+    find . -type f "${exclude_args[@]}" | sed 's|^\./||' | grep -v '^$'
+} | sort
+
+echo -e "\n\n"
+
+find . -type f "${exclude_args[@]}" | grep -E "$search_pattern" | while read -r file; do
+    if [ "$include_binary" = true ] || is_text_file "$file"; then
+        echo "==== $file ===="
+        cat "$file"
+        echo -e "\n\n"
+    else
+        echo "==== $file (Content not displayed due to binary file) ===="
+        echo -e "\n\n"
+    fi
+done
