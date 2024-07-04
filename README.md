@@ -1,6 +1,14 @@
 # pjcat
 
-`pjcat` (Project Cat) is a command-line tool that displays the contents of text files in a project. It's designed to help developers quickly inspect and analyze the contents of their project files while providing options to customize the output.
+`pjcat` (Project Cat) is a command-line tool that consolidates and displays the contents of text files in a project. It's designed to streamline the process of project inspection and analysis, making it particularly useful when working with AI language models like ChatGPT or Claude. By providing a comprehensive view of your project's files, `pjcat` enables developers to quickly gather and format project information, making it easy to input into Large Language Models (LLMs) for code review, documentation generation, or problem-solving assistance.
+
+Key features include:
+- Efficient aggregation of project file contents
+- Customizable file inclusion/exclusion options
+- Output formatting optimized for LLM input
+- Quick project overview for manual inspection or AI-assisted analysis
+
+Whether you're conducting a code review, seeking AI assistance for refactoring, or generating project documentation, `pjcat` simplifies the process of collecting and presenting your project's contents in a format that's both human-readable and AI-friendly.
 
 ## Features
 
