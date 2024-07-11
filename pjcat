@@ -145,7 +145,7 @@ for pattern in "${exclude_patterns[@]}"; do
     exclude_args+=(-not -path "*/$pattern" -not -path "*/$pattern/*" -not -name "$pattern")
 done
 
-echo "=== Directory and File List ==="
+echo "## Directory and File List"
 {
     find . -type d "${exclude_args[@]}" | sed 's|^\./||' | sed 's|$|/|' | grep -v '^$'
     find . -type f "${exclude_args[@]}" | sed 's|^\./||' | grep -v '^$'
@@ -155,11 +155,15 @@ echo -e "\n\n"
 
 find . -type f "${exclude_args[@]}" | grep -E "$search_pattern" | while read -r file; do
     if [ "$include_binary" = true ] || is_text_file "$file"; then
-        echo "==== $file ===="
+        echo "===="
+        echo "## $file"
         cat "$file"
+        echo -e "\n"
+        echo "// end of $file"
         echo -e "\n\n"
     else
-        echo "==== $file (Content not displayed due to binary file) ===="
+        echo "===="
+        echo "## $file (Content not displayed due to binary file)"
         echo -e "\n\n"
     fi
 done
