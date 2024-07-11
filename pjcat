@@ -156,7 +156,9 @@ echo -e "\n\n"
 find . -type f "${exclude_args[@]}" | grep -E "$search_pattern" | while read -r file; do
     if [ "$include_binary" = true ] || is_text_file "$file"; then
         echo "===="
+        echo
         echo "## $file"
+        echo
         cat "$file"
         echo -e "\n"
         echo "// end of $file"
