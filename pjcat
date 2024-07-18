@@ -74,7 +74,7 @@ include_patterns=()
 include_binary=false
 
 binary_extensions="ico png jpg jpeg gif bmp tiff exe dll so dylib bin dat db sqlite pyc pyo o class jar war ear zip tar gz bz2 xz 7z rar pdf doc docx xls xlsx ppt pptx"
-text_extensions="txt log md markdown json xml yaml yml html htm css scss sass less js jsx ts tsx vue php py rb pl sh bash zsh fish conf cfg ini toml csv tsv sql env example"
+text_extensions="txt log md markdown mdx json xml yaml yml html htm css scss sass less js jsx ts tsx vue php py rb pl sh bash zsh fish conf cfg ini toml csv tsv sql env example"
 
 to_lower() {
     echo "$1" | tr '[:upper:]' '[:lower:]'
