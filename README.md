@@ -44,7 +44,7 @@ Here's an example of what the output might look like when running `pjcat` on a s
 % cd /path/to/projectdir/
 $ pjcat -i ".gitignore"
 
-=== Directory and File List ===
+## Directory and File List
 .gitignore
 README.md
 src/
@@ -54,14 +54,19 @@ src/utils/helper.js
 tests/
 tests/index.test.js
 
+====
 
-==== .gitignore ====
+## .gitignore
 node_modules/
 .DS_Store
 *.log
 
+// end of .gitignore
 
-==== README.md ====
+====
+
+## README.md 
+
 # Sample Project
 
 This is a sample project to demonstrate the usage of pjcat.
@@ -70,8 +75,11 @@ This is a sample project to demonstrate the usage of pjcat.
 
 npm install
 
+// endo of README.md
 
-==== src/index.js ====
+====
+
+## src/index.js
 const helper = require('./utils/helper');
 
 function main() {
@@ -81,8 +89,12 @@ function main() {
 
 main();
 
+// end of src/index.js
 
-==== src/utils/helper.js ====
+====
+
+## src/utils/helper.js
+
 function doSomething() {
     console.log('Doing something useful...');
 }
@@ -91,8 +103,12 @@ module.exports = {
     doSomething
 };
 
+// end of src/utils/helper.js
 
-==== tests/index.test.js ====
+====
+
+## tests/index.test.js
+
 const assert = require('assert');
 const helper = require('../src/utils/helper');
 
@@ -103,6 +119,7 @@ describe('Helper', () => {
     });
 });
 
+// end of tests/index.test.js
 
 ```
 
